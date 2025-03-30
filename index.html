@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>The Hari Raya</title>
+    <style>
+        @keyframes swing {
+            0% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-5px) rotate(-5deg); }
+            50% { transform: translateX(5px) rotate(5deg); }
+            75% { transform: translateX(-3px) rotate(-3deg); }
+            100% { transform: translateX(0) rotate(0deg); }
+        }
+
+        .swing {
+            animation: swing 1s ease-in-out infinite;
+        }
+
+        .transition-all {
+            transition: all 0.5s ease-in-out;
+        }
+
+        .paper {
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            left: 50%;
+            transform: translate(-50%, 80%);
+            opacity: 0;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .emoji {
+            position: absolute;
+            top: -50px;
+            font-size: 24px;
+            opacity: 0;
+            animation: fall linear infinite;
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center h-screen bg-gray-900 p-4 relative overflow-hidden">
+    <div id="emoji-container"></div>
+
+    <div id="envelope" class="relative w-72 h-48 cursor-pointer swing mt-[20%]" data-open="false">
+        <div class="absolute w-full h-full bg-green-700 shadow-lg"></div>
+        <div id="envelope-back" class="absolute w-full h-full">
+            <div class="absolute top-0 left-0 w-0 h-0 border-l-[144px] border-l-transparent border-r-[144px] border-r-transparent border-t-[96px] border-t-green-500"></div>
+        </div>
+        
+        <div id="opened-top" class="absolute -top-[95px] left-0 w-0 h-0 border-l-[144px] border-l-transparent border-r-[144px] border-r-transparent border-b-[96px] border-b-green-500 transition-all opacity-0"></div>
+        <div id="paper" class="px-8 py-8 absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%] min-h-[60%] bg-white shadow-md rounded-lg flex flex-col justify-center items-center text-sm font-bold text-gray-800 paper text-center gap-2">
+            <h1 class="text-lg w-full">Selamat Hari Raya!</h1>
+            <h3>تَقَبَّلَ اللهُ مِنْنَا وَمِنْكُمْ صِيَامَنَا وَصِيَامَكُمْ</h3>
+
+            <h2>THR dari Fajrin</h2>
+            <p class="w-full">Scan QR buat THR</p>
+            <div id="qrcode" class="w-32 h-32"></div>
+        </div>
+        
+        <div id="envelope-front" class="absolute inset-0 flex transition-all">
+            <div class="w-1/2 h-full">
+                <div class="absolute left-0 top-0 w-0 h-0 border-l-[144px] border-l-green-600 border-t-[96px] border-t-transparent border-b-[96px] border-b-transparent"></div>
+            </div>
+            <div class="w-1/2 h-full">
+                <div class="absolute right-0 top-0 w-0 h-0 border-r-[144px] border-r-green-600 border-t-[96px] border-t-transparent border-b-[96px] border-b-transparent"></div>
+            </div>
+            <div class="absolute bottom-0 left-0 w-0 h-0 border-l-[144px] border-l-transparent border-r-[144px] border-r-transparent border-b-[96px] border-b-green-700"></div>
+            <div id="closed-top" class="absolute top-0 left-0 w-0 h-0 border-l-[144px] border-l-transparent border-r-[144px] border-r-transparent border-t-[96px] border-t-green-700"></div>
+        </div>
+        
+        <svg class="absolute top-[30%] left-[40%] w-16 h-16 transition-all" viewBox="0 0 100 100">
+            <path d="M50 10 A40 40 0 1 0 90 50 A30 30 0 1 1 50 10" fill="yellow"/>
+        </svg>
+    </div>
+    
+    <script>
+        document.getElementById("envelope").addEventListener("click", function() {
+            let isOpen = this.getAttribute("data-open") === "true";
+            let paper = document.getElementById("paper");
+
+            if (!isOpen) {
+                document.getElementById("opened-top").classList.remove("opacity-0");
+                document.getElementById("closed-top").classList.add("opacity-0");
+                paper.style.transform = "translate(-50%, -200px)"; 
+                paper.style.opacity = "1";
+                this.classList.remove("swing");
+            } else {
+                document.getElementById("opened-top").classList.add("opacity-0");
+                document.getElementById("closed-top").classList.remove("opacity-0");
+                paper.style.transform = "translate(-50%, 0%)";
+                paper.style.opacity = "0";
+                this.classList.add("swing");
+            }
+            this.setAttribute("data-open", !isOpen);
+        });
+
+        function createFallingEmojis() {
+            const emojis = ["🌙", "🕌", "✨", "🌟"];
+            const container = document.getElementById("emoji-container");
+
+            for (let i = 0; i < 20; i++) {
+                let emoji = document.createElement("div");
+                emoji.classList.add("emoji");
+                emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                emoji.style.left = Math.random() * 100 + "vw";
+                emoji.style.animationDuration = (Math.random() * 3 + 3) + "s";
+                emoji.style.fontSize = (Math.random() * 20 + 20) + "px";
+                emoji.style.animationDelay = Math.random() * 5 + "s";
+                
+                container.appendChild(emoji);
+            }
+        }
+
+        createFallingEmojis();
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        new QRCode(document.getElementById("qrcode"), {
+            text: "https://link-thr-kamu.com",
+            width: 128,
+            height: 128
+        });
+    </script>
+</body>
+</html>
